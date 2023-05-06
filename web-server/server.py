@@ -14,6 +14,7 @@ from segment_anything.utils.amg import mask_to_rle_pytorch
 from web_tool import ServerException,ErrorCode
 from io import BytesIO
 import json as bejson
+from config import SEGMENT_OBJ
 
 app = Sanic("SegmentAnythingWebServer")
 model_server = Predictor()
@@ -22,7 +23,6 @@ model_server = Predictor()
 async def ping(request):
     print(request)
     return text("pong")
-
 @app.exception(NotFound)
 async def ignore_404s(request, exception):
     return text('403', status=403)
@@ -30,7 +30,6 @@ async def ignore_404s(request, exception):
 @app.exception(ServerException)
 async def ignore_404s(request, exception: ServerException):
     return json({"data": None, "status": exception.status, "msg": exception.message})
-
 
 # 成功以及失败的返回脚本
 def ok(data):
@@ -96,29 +95,18 @@ def segment(request):
         #     from segment_anything.utils.amg import mask_to_rle_pytorch
         #     a = mask_to_rle_pytorch(torch.from_numpy(masks[i]))
         rles = mask_to_rle_pytorch(torch.from_numpy(masks))
-
-        result_obj = {
-            "segmentation": None,
-            "area": None,
-            "bbox": None,
-            "predicted_iou": None,
-            "point_coords": None,
-            "stability_score": None,
-            "crop_box": None  # 对齐信息
-        }
         result = []
         scores = scores.tolist()
         for i in range(len(scores)):
-            item = result_obj.copy()
+            item = SEGMENT_OBJ.copy()
             item["segmentation"] = rles[i]
             item["stability_score"] = scores[i]
             item["crop_box"] = [0, 0, h, w]
             item["point_coords"] = points
             item["bbox"] = box
             result.append(item)
-        return json(result)
-    # 返回分割结果
-    return json(masks)
+        return ok(result)
+    return ok(masks)
 
 
 
