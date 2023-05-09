@@ -27,7 +27,7 @@ class Predictor():
             box=input_boxs,
             multimask_output=True,
         )
-        return masks,scores
+        return masks, scores
 
     def generate_auto(self, image: np.ndarray) -> List[Dict[str, Any]]:
         return self._auto_predictor.generate(image)
