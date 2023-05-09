@@ -14,10 +14,10 @@ from segment_anything.utils.amg import mask_to_rle_pytorch
 from web_tool import ServerException,ErrorCode
 from io import BytesIO
 import json as bejson
-from config import SEGMENT_OBJ
+from config import SEGMENT_OBJ,MODEL_PATH
 
 app = Sanic("SegmentAnythingWebServer")
-model_server = Predictor()
+model_server = Predictor(model_path=MODEL_PATH)
 
 @app.get("/")
 async def ping(request):

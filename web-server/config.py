@@ -7,3 +7,5 @@ SEGMENT_OBJ = {
     "stability_score": None,
     "crop_box": None  # 对齐信息
 }
+
+MODEL_PATH = "model/sam_vit_h_4b8939.pth"
